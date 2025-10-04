@@ -1,19 +1,8 @@
-import Header from '@/components/Header';
-import Hero from '@/components/Hero';
-import Categories from '@/components/Categories';
-import FeaturedProducts from '@/components/FeaturedProducts';
-import DeliveryInfo from '@/components/DeliveryInfo';
-import Footer from '@/components/Footer';
-
 export default function Home() {
   return (
-    <div className="min-h-screen">
-      <Header />
-      <Hero />
-      <Categories />
-      <FeaturedProducts />
-      <DeliveryInfo />
-      <Footer />
-    </div>
+    <main style={{ textAlign: "center", padding: "40px" }}>
+      <h1>Bienvenue chez Ben Daoud Bijouterie</h1>
+      <p>Découvrez nos bijoux en or 18 carats et nos montres de marques prestigieuses.</p>
+    </main>
   );
 }
