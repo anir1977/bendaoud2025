@@ -1,7 +1,8 @@
 // app/page.tsx
 import { redirect } from 'next/navigation';
 
-export default function Home() {
-  redirect('/bijoux'); // غيّر المسار إذا كانت صفحتك الأساسية مختلفة
+export default function Accueil() {
+  // تحويل تلقائي نحو صفحة "bijoux" أو أي صفحة رئيسية تريدها
+  redirect('/bijoux'); 
   return null;
 }
