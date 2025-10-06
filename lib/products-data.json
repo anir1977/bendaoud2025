@@ -1,0 +1,178 @@
+[
+  {
+    "slug": "bague-solitaire-diamant-or-18k",
+    "title": "Bague Solitaire Diamant Or 18K",
+    "brand": "Ben Daoud",
+    "description": "Magnifique bague solitaire en or 18 carats sertie d'un diamant brillant de qualité exceptionnelle. Cette pièce d'exception allie tradition artisanale et design contemporain pour créer un bijou unique qui sublimera votre style avec élégance et raffinement.",
+    "price_mad": 15000,
+    "images": ["https://readdy.ai/api/search-image?query=elegant%20diamond%20solitaire%20ring%2018k%20gold%20luxury%20jewelry%20simple%20white%20background%20professional%20photography&width=600&height=600&seq=1&orientation=squarish"],
+    "type": "product",
+    "is_published": true,
+    "category_slug": "bagues"
+  },
+  {
+    "slug": "alliance-or-jaune-18k-classique",
+    "title": "Alliance Or Jaune 18K Classique",
+    "brand": "Ben Daoud",
+    "description": "Alliance traditionnelle en or jaune 18 carats au design intemporel. Symbole d'amour éternel, cette alliance classique accompagnera vos plus beaux moments avec discrétion et élégance. Finition polie miroir pour un éclat exceptionnel.",
+    "price_mad": 2800,
+    "images": ["https://readdy.ai/api/search-image?query=classic%20yellow%20gold%20wedding%20band%2018k%20simple%20elegant%20design%20white%20background%20luxury%20jewelry%20photography&width=600&height=600&seq=2&orientation=squarish"],
+    "type": "product",
+    "is_published": true,
+    "category_slug": "bagues"
+  },
+  {
+    "slug": "bracelet-maille-or-blanc-18k",
+    "title": "Bracelet Maille Or Blanc 18K",
+    "brand": "Ben Daoud",
+    "description": "Bracelet sophistiqué en or blanc 18 carats avec maille tressée artisanale. Ce bijou d'une élégance remarquable apporte une touche de raffinement à votre poignet. Fermoir sécurisé et finition haute joaillerie pour un confort optimal.",
+    "price_mad": 4200,
+    "images": ["https://readdy.ai/api/search-image?query=elegant%20white%20gold%20bracelet%2018k%20chain%20link%20design%20luxury%20jewelry%20white%20background%20professional%20photography&width=600&height=600&seq=3&orientation=squarish"],
+    "type": "product",
+    "is_published": true,
+    "category_slug": "bracelets"
+  },
+  {
+    "slug": "gourmette-or-rose-18k-homme",
+    "title": "Gourmette Or Rose 18K Homme",
+    "brand": "Ben Daoud",
+    "description": "Gourmette masculine en or rose 18 carats au design moderne et robuste. Cette chaîne de caractère allie force et élégance pour l'homme contemporain. Maillons soigneusement polis et fermoir sécurisé pour un port quotidien confortable.",
+    "price_mad": 5800,
+    "images": ["https://readdy.ai/api/search-image?query=mens%20rose%20gold%20chain%20bracelet%2018k%20curb%20link%20design%20luxury%20jewelry%20white%20background%20professional%20photography%20masculine&width=600&height=600&seq=4&orientation=squarish"],
+    "type": "product",
+    "is_published": true,
+    "category_slug": "gourmettes"
+  },
+  {
+    "slug": "collier-perles-or-rose-18k",
+    "title": "Collier Perles Or Rose 18K",
+    "brand": "Ben Daoud",
+    "description": "Collier délicat en or rose 18 carats orné de perles naturelles d'eau douce. Cette création unique combine la douceur de l'or rose avec l'éclat nacré des perles pour un bijou d'une féminité absolue. Parfait pour sublimer vos tenues de soirée.",
+    "price_mad": 6800,
+    "images": ["https://readdy.ai/api/search-image?query=elegant%20rose%20gold%20pearl%20necklace%2018k%20natural%20pearls%20luxury%20jewelry%20white%20background%20sophisticated%20design&width=600&height=600&seq=5&orientation=squarish"],
+    "type": "product",
+    "is_published": true,
+    "category_slug": "colliers"
+  },
+  {
+    "slug": "parure-complete-or-jaune-18k",
+    "title": "Parure Complète Or Jaune 18K",
+    "brand": "Ben Daoud",
+    "description": "Parure exceptionnelle composée d'un collier, bracelet et boucles d'oreilles assortis en or jaune 18 carats. Design harmonieux avec motifs floraux délicatement ciselés. Cette parure complète vous garantit une élégance parfaite pour vos occasions spéciales.",
+    "price_mad": 12500,
+    "images": ["https://readdy.ai/api/search-image?query=complete%20jewelry%20set%20yellow%20gold%2018k%20necklace%20bracelet%20earrings%20matching%20design%20luxury%20white%20background%20professional%20photography&width=600&height=600&seq=6&orientation=squarish"],
+    "type": "product",
+    "is_published": true,
+    "category_slug": "parures"
+  },
+  {
+    "slug": "sautoir-chaine-or-blanc-18k",
+    "title": "Sautoir Chaîne Or Blanc 18K",
+    "brand": "Ben Daoud",
+    "description": "Sautoir élégant en or blanc 18 carats avec maille vénitienne raffinée. Cette longue chaîne polyvalente peut être portée simple ou doublée selon vos envies. Finition miroir exceptionnelle et fermoir invisible pour un style épuré et moderne.",
+    "price_mad": 7200,
+    "images": ["https://readdy.ai/api/search-image?query=long%20white%20gold%20chain%20necklace%2018k%20venetian%20link%20design%20luxury%20jewelry%20white%20background%20professional%20photography%20elegant&width=600&height=600&seq=7&orientation=squarish"],
+    "type": "product",
+    "is_published": true,
+    "category_slug": "sautoirs"
+  },
+  {
+    "slug": "boucles-oreilles-diamants-or-blanc",
+    "title": "Boucles d'Oreilles Diamants Or Blanc",
+    "brand": "Ben Daoud",
+    "description": "Boucles d'oreilles raffinées en or blanc 18 carats serties de diamants brillants. Ces puces élégantes captent la lumière avec éclat et apportent une touche de luxe discret à votre visage. Fermoir papillon sécurisé pour un port confortable.",
+    "price_mad": 8900,
+    "images": ["https://readdy.ai/api/search-image?query=elegant%20diamond%20stud%20earrings%20white%20gold%2018k%20luxury%20jewelry%20white%20background%20professional%20photography%20sparkling&width=600&height=600&seq=8&orientation=squarish"],
+    "type": "product",
+    "is_published": true,
+    "category_slug": "boucles"
+  },
+  {
+    "slug": "bague-emeraude-or-jaune-18k",
+    "title": "Bague Émeraude Or Jaune 18K",
+    "brand": "Ben Daoud",
+    "description": "Bague prestigieuse en or jaune 18 carats sertie d'une émeraude naturelle de Colombie. Cette pierre précieuse d'un vert intense est entourée de diamants brillants pour un éclat exceptionnel. Pièce unique pour les amatrices de pierres précieuses authentiques.",
+    "price_mad": 18500,
+    "images": ["https://readdy.ai/api/search-image?query=emerald%20ring%20yellow%20gold%2018k%20natural%20colombian%20emerald%20diamonds%20luxury%20jewelry%20white%20background%20professional%20photography&width=600&height=600&seq=9&orientation=squarish"],
+    "type": "product",
+    "is_published": true,
+    "category_slug": "bagues"
+  },
+  {
+    "slug": "bracelet-tennis-diamants-or-blanc",
+    "title": "Bracelet Tennis Diamants Or Blanc",
+    "brand": "Ben Daoud",
+    "description": "Bracelet tennis exceptionnel en or blanc 18 carats serti de diamants brillants calibrés. Cette rivière de diamants d'une pureté remarquable illumine votre poignet avec un éclat incomparable. Fermoir sécurisé invisible pour un confort optimal.",
+    "price_mad": 25000,
+    "images": ["https://readdy.ai/api/search-image?query=diamond%20tennis%20bracelet%20white%20gold%2018k%20brilliant%20cut%20diamonds%20luxury%20jewelry%20white%20background%20professional%20photography%20sparkling&width=600&height=600&seq=10&orientation=squarish"],
+    "type": "product",
+    "is_published": true,
+    "category_slug": "bracelets"
+  },
+  {
+    "slug": "montre-tissot-prc-200-homme",
+    "title": "Montre Tissot PRC 200 Homme",
+    "brand": "Tissot",
+    "description": "Montre sportive Tissot PRC 200 alliant précision suisse et robustesse. Boîtier en acier inoxydable, cadran noir avec index luminescents, étanchéité 200m. Mouvement quartz de haute précision pour une fiabilité absolue. Parfaite pour les amateurs de sport et d'élégance.",
+    "price_mad": 2800,
+    "images": ["https://readdy.ai/api/search-image?query=Tissot%20PRC%20200%20mens%20watch%20stainless%20steel%20black%20dial%20swiss%20luxury%20timepiece%20white%20background%20professional%20photography&width=600&height=600&seq=11&orientation=squarish"],
+    "type": "product",
+    "is_published": true,
+    "category_slug": "montres"
+  },
+  {
+    "slug": "montre-guess-femme-dore",
+    "title": "Montre Guess Femme Dorée",
+    "brand": "GUESS",
+    "description": "Montre féminine Guess au design glamour avec boîtier doré et bracelet métallique assorti. Cadran élégant orné de cristaux Swarovski pour un éclat incomparable. Cette montre mode allie style contemporain et sophistication pour la femme moderne.",
+    "price_mad": 1850,
+    "images": ["https://readdy.ai/api/search-image?query=Guess%20womens%20gold%20watch%20crystal%20dial%20fashion%20luxury%20timepiece%20white%20background%20professional%20photography%20elegant&width=600&height=600&seq=12&orientation=squarish"],
+    "type": "product",
+    "is_published": true,
+    "category_slug": "montres"
+  },
+  {
+    "slug": "montre-festina-chronographe-sport",
+    "title": "Montre Festina Chronographe Sport",
+    "brand": "Festina",
+    "description": "Montre chronographe Festina au design sportif et technique. Boîtier robuste en acier, cadran multifonctions avec compteurs, bracelet en cuir véritable. Mouvement chronographe précis pour mesurer vos performances. Idéale pour les passionnés de sport et de technologie horlogère.",
+    "price_mad": 2200,
+    "images": ["https://readdy.ai/api/search-image?query=Festina%20chronograph%20sports%20watch%20steel%20case%20leather%20strap%20professional%20timepiece%20white%20background%20luxury%20photography&width=600&height=600&seq=13&orientation=squarish"],
+    "type": "product",
+    "is_published": true,
+    "category_slug": "montres"
+  },
+  {
+    "slug": "montre-tissot-seastar-automatique",
+    "title": "Montre Tissot Seastar Automatique",
+    "brand": "Tissot",
+    "description": "Montre automatique Tissot Seastar avec mouvement mécanique suisse. Boîtier en acier inoxydable, cadran bleu océan, lunette unidirectionnelle. Étanchéité 300m pour la plongée. Réserve de marche 38h, verre saphir anti-reflet. L'excellence horlogère suisse à votre poignet.",
+    "price_mad": 4200,
+    "images": ["https://readdy.ai/api/search-image?query=Tissot%20Seastar%20automatic%20watch%20blue%20dial%20steel%20case%20diving%20watch%20swiss%20luxury%20timepiece%20white%20background%20professional%20photography&width=600&height=600&seq=14&orientation=squarish"],
+    "type": "product",
+    "is_published": true,
+    "category_slug": "montres"
+  },
+  {
+    "slug": "montre-guess-homme-chronographe",
+    "title": "Montre Guess Homme Chronographe",
+    "brand": "GUESS",
+    "description": "Montre chronographe masculine Guess au design contemporain et sportif. Boîtier en acier brossé, cadran noir avec compteurs contrastés, bracelet en acier inoxydable. Fonctions chronographe et date pour un usage quotidien. Style urbain et moderne pour l'homme actuel.",
+    "price_mad": 2400,
+    "images": ["https://readdy.ai/api/search-image?query=Guess%20mens%20chronograph%20watch%20steel%20case%20black%20dial%20urban%20style%20luxury%20timepiece%20white%20background%20professional%20photography&width=600&height=600&seq=15&orientation=squarish"],
+    "type": "product",
+    "is_published": true,
+    "category_slug": "montres"
+  },
+  {
+    "slug": "montre-festina-femme-elegance",
+    "title": "Montre Festina Femme Élégance",
+    "brand": "Festina",
+    "description": "Montre féminine Festina au design raffiné et intemporel. Boîtier doré rose, cadran nacré avec index diamantés, bracelet en cuir italien véritable. Mouvement quartz précis et résistant à l'eau. L'accessoire parfait pour la femme élégante et moderne.",
+    "price_mad": 1950,
+    "images": ["https://readdy.ai/api/search-image?query=Festina%20womens%20elegant%20watch%20rose%20gold%20case%20mother%20of%20pearl%20dial%20leather%20strap%20luxury%20timepiece%20white%20background%20professional%20photography&width=600&height=600&seq=16&orientation=squarish"],
+    "type": "product",
+    "is_published": true,
+    "category_slug": "montres"
+  }
+]
