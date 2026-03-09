@@ -1,6 +1,7 @@
 
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { STORE_PHOTO_URL } from '@/lib/store-media';
 
 export default function MagasinPage() {
   return (
@@ -97,6 +98,16 @@ export default function MagasinPage() {
             </div>
 
             <div className="space-y-8">
+              <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div className="relative h-72 md:h-96">
+                  <img
+                    src={STORE_PHOTO_URL}
+                    alt="Facade du magasin Ben Daoud Bijouterie"
+                    className="w-full h-full object-cover object-center"
+                  />
+                </div>
+              </div>
+
               <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
                 <div className="h-96">
                   <iframe

@@ -1,4 +1,5 @@
 import MaintenanceCountdown from '@/components/MaintenanceCountdown'
+import { STORE_PHOTO_URL } from '@/lib/store-media'
 
 export const metadata = {
   title: 'Maintenance en cours | Ben Daoud Bijouterie',
@@ -9,15 +10,16 @@ export default function MaintenancePage() {
   return (
     <main className="min-h-screen relative overflow-hidden bg-slate-950">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(251,191,36,0.22),_transparent_50%),radial-gradient(circle_at_bottom_right,_rgba(59,130,246,0.18),_transparent_45%)]" />
-      <div className="absolute inset-0 opacity-35 pointer-events-none">
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3323.7234567890123!2d-7.5942577!3d33.5861925!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xda7cd6a79846c4d%3A0x81cb4eff7369e1d6!2sBen%20Daoud%20Bijouterie!5e0!3m2!1sfr!2sma!4v1234567890123"
-          title="Localisation Ben Daoud Bijouterie"
-          className="w-full h-full border-0"
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-        />
-      </div>
+      <div
+        className="absolute inset-0 opacity-30"
+        style={{
+          backgroundImage: `url('${STORE_PHOTO_URL}')`,
+          backgroundPosition: 'center',
+          backgroundSize: 'cover',
+        }}
+      />
+
+      <div className="absolute inset-0 bg-slate-950/55" />
 
       <section className="relative z-10 min-h-screen flex items-center justify-center px-4 py-10">
         <div className="w-full max-w-4xl rounded-3xl border border-white/15 bg-slate-900/70 backdrop-blur-xl shadow-2xl p-6 md:p-10 text-center">
