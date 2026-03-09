@@ -10,6 +10,9 @@ export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+  const isSupabaseConfigured = Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  )
   const router = useRouter()
   const supabase = createClientComponentClient()
 
@@ -18,6 +21,12 @@ export default function AdminLoginPage() {
     setLoading(true)
     setError('')
     setMessage('')
+
+    if (!isSupabaseConfigured) {
+      setError('Configuration Supabase manquante. Ajoutez NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_ANON_KEY dans les variables d\'environnement (Vercel + local).')
+      setLoading(false)
+      return
+    }
 
     try {
       const { error } = await supabase.auth.signInWithOtp({
@@ -28,12 +37,17 @@ export default function AdminLoginPage() {
       })
 
       if (error) {
-        setError(error.message)
+        if (error.message.toLowerCase().includes('failed to fetch')) {
+          setError('Connexion Supabase impossible. Vérifiez: 1) NEXT_PUBLIC_SUPABASE_URL/ANON_KEY sur Vercel, 2) Auth > URL Configuration (Site URL + Redirect URL), 3) pas de bloqueur réseau.')
+        } else {
+          setError(error.message)
+        }
       } else {
         setMessage('Un lien de connexion a été envoyé à votre email. Vérifiez votre boîte de réception.')
       }
     } catch (err) {
-      setError('Une erreur est survenue lors de l\'envoi du lien de connexion')
+      console.error('Admin login error:', err)
+      setError('Erreur réseau lors de l\'envoi du lien. Vérifiez la configuration Supabase et réessayez.')
     } finally {
       setLoading(false)
     }
@@ -130,6 +144,9 @@ export default function AdminLoginPage() {
                 <p>• Aucun mot de passe requis</p>
                 <p>• Lien de connexion temporaire</p>
                 <p>• Accès réservé aux administrateurs</p>
+                {!isSupabaseConfigured && (
+                  <p className="text-red-600 font-medium">⚠ Variables Supabase manquantes dans l'environnement.</p>
+                )}
               </div>
             </div>
           </div>
