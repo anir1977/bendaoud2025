@@ -9,15 +9,15 @@ export default function MaintenancePage() {
   return (
     <main className="min-h-screen relative overflow-hidden bg-slate-950">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(251,191,36,0.22),_transparent_50%),radial-gradient(circle_at_bottom_right,_rgba(59,130,246,0.18),_transparent_45%)]" />
-      <div
-        className="absolute inset-0 opacity-25"
-        style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1508057198894-247b23fe5ade?auto=format&fit=crop&w=1600&q=80')",
-          backgroundPosition: 'center',
-          backgroundSize: 'cover',
-        }}
-      />
+      <div className="absolute inset-0 opacity-35 pointer-events-none">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3323.7234567890123!2d-7.5942577!3d33.5861925!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xda7cd6a79846c4d%3A0x81cb4eff7369e1d6!2sBen%20Daoud%20Bijouterie!5e0!3m2!1sfr!2sma!4v1234567890123"
+          title="Localisation Ben Daoud Bijouterie"
+          className="w-full h-full border-0"
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        />
+      </div>
 
       <section className="relative z-10 min-h-screen flex items-center justify-center px-4 py-10">
         <div className="w-full max-w-4xl rounded-3xl border border-white/15 bg-slate-900/70 backdrop-blur-xl shadow-2xl p-6 md:p-10 text-center">
@@ -39,7 +39,30 @@ export default function MaintenancePage() {
           </div>
 
           <div className="mt-8 text-slate-300 text-sm md:text-base">
-            Pour toute urgence: <span className="text-amber-300 font-semibold">+212 6 00 00 00 00</span>
+            Pour toute urgence: <a href="tel:0522621818" className="text-amber-300 font-semibold hover:text-amber-200">0522621818</a>
+          </div>
+
+          <div className="mt-6 flex items-center justify-center gap-3">
+            <a
+              href="https://www.facebook.com"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm text-white hover:bg-white/20 transition-colors"
+              aria-label="Facebook"
+            >
+              <i className="ri-facebook-fill" />
+              Facebook
+            </a>
+            <a
+              href="https://www.instagram.com"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm text-white hover:bg-white/20 transition-colors"
+              aria-label="Instagram"
+            >
+              <i className="ri-instagram-line" />
+              Instagram
+            </a>
           </div>
         </div>
       </section>
