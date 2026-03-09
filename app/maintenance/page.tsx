@@ -53,30 +53,30 @@ export default function MaintenancePage() {
               <MaintenanceCountdown />
             </div>
 
-            <div className="mt-8 text-slate-100 text-sm md:text-base">
-              Pour toute urgence: <a href="tel:0522621818" className="text-amber-300 font-semibold hover:text-amber-200">0522621818</a>
+            <div className="mt-8 text-slate-100 text-sm md:text-base flex items-center justify-center gap-2">
+              <i className="ri-phone-line text-amber-300 text-lg" aria-hidden="true" />
+              <span>Pour toute urgence:</span>
+              <a href="tel:0522621818" className="text-amber-300 font-semibold hover:text-amber-200">0522621818</a>
             </div>
 
             <div className="mt-6 flex items-center justify-center gap-3">
               <a
-                href="https://www.facebook.com"
+                href="https://www.facebook.com/bendaoud.bijouterie"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-4 py-2 text-sm text-white hover:bg-white/25 transition-colors"
+                className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors"
                 aria-label="Facebook"
               >
-                <i className="ri-facebook-fill" />
-                Facebook
+                <i className="ri-facebook-fill text-xl" />
               </a>
               <a
-                href="https://www.instagram.com"
+                href="https://www.instagram.com/bendaoud_officiel/?hl=fr"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-4 py-2 text-sm text-white hover:bg-white/25 transition-colors"
+                className="w-12 h-12 bg-pink-600 text-white rounded-full flex items-center justify-center hover:bg-pink-700 transition-colors"
                 aria-label="Instagram"
               >
-                <i className="ri-instagram-line" />
-                Instagram
+                <i className="ri-instagram-fill text-xl" />
               </a>
             </div>
           </div>
