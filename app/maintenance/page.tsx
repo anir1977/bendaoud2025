@@ -11,7 +11,7 @@ export default function MaintenancePage() {
     <main className="min-h-screen relative overflow-hidden bg-slate-950">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(251,191,36,0.22),_transparent_50%),radial-gradient(circle_at_bottom_right,_rgba(59,130,246,0.18),_transparent_45%)]" />
       <div
-        className="absolute inset-0 opacity-20"
+        className="absolute inset-0 opacity-30"
         style={{
           backgroundImage: `url('${STORE_PHOTO_URL}')`,
           backgroundPosition: 'center',
@@ -19,7 +19,7 @@ export default function MaintenancePage() {
         }}
       />
 
-      <div className="absolute inset-0 bg-slate-950/45" />
+      <div className="absolute inset-0 bg-slate-950/25" />
 
       <section className="relative z-10 min-h-screen flex items-center justify-center px-4 py-10">
         <div className="relative overflow-hidden w-full max-w-4xl rounded-3xl border border-white/20 shadow-2xl text-center">
@@ -29,10 +29,11 @@ export default function MaintenancePage() {
               backgroundImage: `url('${STORE_PHOTO_URL}')`,
               backgroundPosition: 'center',
               backgroundSize: 'cover',
+              filter: 'brightness(1.15) saturate(1.1)',
             }}
           />
-          <div className="absolute inset-0 bg-slate-950/55" />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.55)_0%,rgba(2,6,23,0.72)_100%)]" />
+          <div className="absolute inset-0 bg-slate-950/35" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.30)_0%,rgba(2,6,23,0.45)_100%)]" />
 
           <div className="relative z-10 p-6 md:p-10">
             <p className="inline-flex items-center rounded-full border border-amber-300/40 bg-amber-400/10 px-4 py-1 text-xs md:text-sm uppercase tracking-[0.2em] text-amber-200">
