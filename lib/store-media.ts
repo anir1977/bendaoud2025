@@ -1,2 +1,2 @@
 export const STORE_PHOTO_URL =
-  'https://readdy.ai/api/search-image?query=Elegant%20jewelry%20storefront%20of%20Ben%20Daoud%20Bijouterie%20in%20Casablanca%2C%20professional%20exterior%20photo%2C%20luxury%20window%20display%2C%20golden%20warm%20lights%2C%20high-end%20retail%20facade%2C%20daylight%20urban%20setting&width=1600&height=1000&seq=bendaoud-storefront&orientation=landscape'
+  'https://scontent.fcmn7-1.fna.fbcdn.net/v/t39.30808-6/475841114_1061565126003104_7213257306254394918_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=2a1932&_nc_ohc=pRdj8iHWy4AQ7kNvwGBmkjI&_nc_oc=Adm0TeDaqWVmEwuvhH6htKusTpEWXv0-2KrZPF01r-SHI0pi_j0bAlJCqbQ2phxg5JM&_nc_zt=23&_nc_ht=scontent.fcmn7-1.fna&_nc_gid=dgSalqjCPoxM8k8igLGF-A&_nc_ss=8&oh=00_AfwFoo5Islx5D4k4rRx5O-AaD5LqigHc1F2tNv8QxXQYaw&oe=69B434D8'
