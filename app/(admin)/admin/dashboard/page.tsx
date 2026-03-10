@@ -26,6 +26,8 @@ interface Stats {
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null)
   const [loading, setLoading] = useState(true)
+  const [maintenanceEnabled, setMaintenanceEnabled] = useState(false)
+  const [maintenanceLoading, setMaintenanceLoading] = useState(false)
 
   useEffect(() => {
     fetchStats()
@@ -92,10 +94,41 @@ export default function AdminDashboard() {
         }
       }
       setStats(mockStats)
+
+      const maintenanceResponse = await fetch('/api/admin/maintenance', {
+        cache: 'no-store',
+      })
+      if (maintenanceResponse.ok) {
+        const maintenanceJson = await maintenanceResponse.json()
+        setMaintenanceEnabled(Boolean(maintenanceJson?.enabled))
+      }
     } catch (error) {
       console.error('Erreur lors du chargement des statistiques:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const toggleMaintenance = async () => {
+    setMaintenanceLoading(true)
+    try {
+      const response = await fetch('/api/admin/maintenance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled: !maintenanceEnabled }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Impossible de changer le mode maintenance')
+      }
+
+      const json = await response.json()
+      setMaintenanceEnabled(Boolean(json?.enabled))
+    } catch (error) {
+      console.error(error)
+      alert('Erreur lors du changement du mode maintenance.')
+    } finally {
+      setMaintenanceLoading(false)
     }
   }
 
@@ -116,7 +149,25 @@ export default function AdminDashboard() {
   return (
     <AdminLayout>
       <div className="px-4 sm:px-0">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Tableau de bord</h1>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Tableau de bord</h1>
+          <button
+            onClick={toggleMaintenance}
+            disabled={maintenanceLoading}
+            className={`px-4 py-2 rounded-md text-sm font-medium text-white whitespace-nowrap ${
+              maintenanceEnabled
+                ? 'bg-red-600 hover:bg-red-700'
+                : 'bg-emerald-600 hover:bg-emerald-700'
+            } disabled:opacity-60`}
+          >
+            <i className="ri-tools-line mr-2"></i>
+            {maintenanceLoading
+              ? 'Mise a jour...'
+              : maintenanceEnabled
+              ? 'Desactiver maintenance'
+              : 'Activer maintenance'}
+          </button>
+        </div>
 
         {/* Statistiques principales */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
