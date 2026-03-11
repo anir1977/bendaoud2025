@@ -2,7 +2,6 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useCart } from '@/components/CartProvider'
 
@@ -96,13 +95,13 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             {/* Main Image */}
             <div className="aspect-square relative overflow-hidden rounded-lg bg-gray-100">
               {product.images && product.images.length > 0 ? (
-                <Image
+                <img
                   src={product.images[selectedImage] || product.images[0]}
                   alt={product.title}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  priority
+                  className="w-full h-full object-cover"
+                  loading="eager"
+                  decoding="async"
+                  referrerPolicy="no-referrer"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
@@ -124,12 +123,13 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
-                    <Image
+                    <img
                       src={image}
                       alt={`${product.title} - Image ${index + 1}`}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 1024px) 25vw, 12.5vw"
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                      referrerPolicy="no-referrer"
                     />
                   </button>
                 ))}
