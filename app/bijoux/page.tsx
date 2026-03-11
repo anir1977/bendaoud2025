@@ -6,96 +6,61 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import WhatsAppFloat from '@/components/WhatsAppFloat';
 import Link from 'next/link';
+import productsData from '@/lib/products-data.json';
 
-const categories = [
-  'Tous', 'Bague', 'Solitaire', 'Bracelet', 'Gourmette', 'Collier', 'Ensemble', 'Parure', 'Sautoir', 'Boucle'
-];
+interface CatalogProduct {
+  slug: string;
+  title: string;
+  price_mad: number;
+  images: string[];
+  type: string;
+  is_published: boolean;
+  category_slug: string;
+}
 
-const metalColors = ['Tous', 'Or jaune', 'Or blanc', 'Or rose'];
+const JEWELRY_CATEGORIES = new Set([
+  'bagues',
+  'bracelets',
+  'gourmettes',
+  'colliers',
+  'parures',
+  'sautoirs',
+  'boucles',
+]);
 
-const products = [
-  {
-    id: "1",
-    title: "Bague Solitaire Diamant Or 18K",
-    price: 8500,
-    image: "https://readdy.ai/api/search-image?query=Elegant%20diamond%20solitaire%20ring%20in%2018k%20gold%2C%20single%20brilliant%20cut%20diamond%2C%20classic%20engagement%20ring%20design%20on%20white%20background%2C%20professional%20jewelry%20photography%2C%20luxury%20and%20sophistication&width=300&height=300&seq=bijoux1&orientation=squarish",
-    category: "Solitaire",
-    metalColor: "Or jaune",
-    slug: "bague-solitaire-diamant-or-18k"
-  },
-  {
-    id: "2",
-    title: "Collier Chaîne Or 18K",
-    price: 3200,
-    image: "https://readdy.ai/api/search-image?query=Beautiful%2018k%20gold%20chain%20necklace%2C%20elegant%20design%20with%20delicate%20links%2C%20luxury%20gold%20jewelry%20on%20white%20background%2C%20professional%20jewelry%20photography%2C%20warm%20golden%20lighting&width=300&height=300&seq=bijoux2&orientation=squarish",
-    category: "Collier",
-    metalColor: "Or jaune",
-    slug: "collier-chaine-or-18k"
-  },
-  {
-    id: "3",
-    title: "Bracelet Gourmette Or 18K",
-    price: 2800,
-    image: "https://readdy.ai/api/search-image?query=18k%20gold%20curb%20chain%20bracelet%2C%20classic%20gourmette%20design%2C%20luxury%20gold%20jewelry%20on%20white%20background%2C%20professional%20jewelry%20photography%2C%20warm%20golden%20lighting%2C%20elegant%20and%20sophisticated&width=300&height=300&seq=bijoux3&orientation=squarish",
-    category: "Gourmette",
-    metalColor: "Or jaune",
-    slug: "bracelet-gourmette-or-18k"
-  },
-  {
-    id: "4",
-    title: "Boucles d'Oreilles Or 18K",
-    price: 1800,
-    image: "https://readdy.ai/api/search-image?query=Elegant%2018k%20gold%20earrings%2C%20classic%20design%20with%20small%20diamonds%2C%20luxury%20jewelry%20on%20white%20background%2C%20professional%20jewelry%20photography%2C%20warm%20golden%20lighting%2C%20sophisticated%20and%20timeless&width=300&height=300&seq=bijoux4&orientation=squarish",
-    category: "Boucle",
-    metalColor: "Or jaune",
-    slug: "boucles-oreilles-or-18k"
-  },
-  {
-    id: "5",
-    title: "Alliance Or Blanc 18K",
-    price: 2200,
-    image: "https://readdy.ai/api/search-image?query=White%20gold%20wedding%20band%2018k%2C%20elegant%20simple%20design%2C%20luxury%20jewelry%20on%20white%20background%2C%20professional%20jewelry%20photography%2C%20sophisticated%20and%20timeless%2C%20clean%20minimalist%20style&width=300&height=300&seq=bijoux5&orientation=squarish",
-    category: "Bague",
-    metalColor: "Or blanc",
-    slug: "alliance-or-blanc-18k"
-  },
-  {
-    id: "6",
-    title: "Parure Complète Or Rose",
-    price: 6500,
-    image: "https://readdy.ai/api/search-image?query=Complete%20rose%20gold%20jewelry%20set%20with%20matching%20necklace%2C%20earrings%2C%20bracelet%20in%2018k%20rose%20gold%2C%20coordinated%20jewelry%20collection%20on%20elegant%20background%2C%20professional%20luxury%20jewelry%20photography&width=300&height=300&seq=bijoux6&orientation=squarish",
-    category: "Parure",
-    metalColor: "Or rose",
-    slug: "parure-complete-or-rose"
-  },
-  {
-    id: "7",
-    title: "Sautoir Perles Or 18K",
-    price: 4200,
-    image: "https://readdy.ai/api/search-image?query=Long%20pearl%20necklace%20with%2018k%20gold%20elements%2C%20elegant%20sautoir%20design%2C%20luxury%20jewelry%20on%20white%20background%2C%20professional%20jewelry%20photography%2C%20sophisticated%20and%20classic&width=300&height=300&seq=bijoux7&orientation=squarish",
-    category: "Sautoir",
-    metalColor: "Or jaune",
-    slug: "sautoir-perles-or-18k"
-  },
-  {
-    id: "8",
-    title: "Ensemble Bague et Boucles",
-    price: 3800,
-    image: "https://readdy.ai/api/search-image?query=Matching%20ring%20and%20earrings%20set%20in%2018k%20gold%20with%20diamonds%2C%20coordinated%20jewelry%20ensemble%20on%20white%20background%2C%20professional%20jewelry%20photography%2C%20luxury%20and%20elegance&width=300&height=300&seq=bijoux8&orientation=squarish",
-    category: "Ensemble",
-    metalColor: "Or jaune",
-    slug: "ensemble-bague-boucles"
-  },
-  {
-    id: "9",
-    title: "Bracelet Tennis Diamants",
-    price: 12500,
-    image: "https://readdy.ai/api/search-image?query=Diamond%20tennis%20bracelet%20in%2018k%20white%20gold%2C%20continuous%20line%20of%20brilliant%20diamonds%2C%20luxury%20jewelry%20on%20white%20background%2C%20professional%20jewelry%20photography%2C%20sophisticated%20and%20elegant&width=300&height=300&seq=bijoux9&orientation=squarish",
-    category: "Bracelet",
-    metalColor: "Or blanc",
-    slug: "bracelet-tennis-diamants"
-  }
-];
+const categoryLabels: Record<string, string> = {
+  bagues: 'Bague',
+  bracelets: 'Bracelet',
+  gourmettes: 'Gourmette',
+  colliers: 'Collier',
+  parures: 'Parure',
+  sautoirs: 'Sautoir',
+  boucles: 'Boucle',
+};
+
+const detectMetalColor = (title: string) => {
+  const lowerTitle = title.toLowerCase();
+  if (lowerTitle.includes('or blanc')) return 'Or blanc';
+  if (lowerTitle.includes('or rose')) return 'Or rose';
+  if (lowerTitle.includes('or jaune')) return 'Or jaune';
+  return 'Or 18K';
+};
+
+const products = (productsData as CatalogProduct[])
+  .filter((product) => product.type === 'product' && product.is_published)
+  .filter((product) => JEWELRY_CATEGORIES.has(product.category_slug))
+  .map((product) => ({
+    id: product.slug,
+    title: product.title,
+    price: product.price_mad,
+    image: product.images[0] || '/placeholder-product.jpg',
+    category: categoryLabels[product.category_slug] || 'Bijou',
+    metalColor: detectMetalColor(product.title),
+    slug: product.slug,
+  }));
+
+const categories = ['Tous', ...new Set(products.map((product) => product.category))];
+const metalColors = ['Tous', ...new Set(products.map((product) => product.metalColor))];
 
 export default function BijouxPage() {
   const [selectedCategory, setSelectedCategory] = useState('Tous');
