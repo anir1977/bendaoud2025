@@ -7,14 +7,19 @@ import Link from 'next/link'
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [fallbackLoading, setFallbackLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+  const [fallbackError, setFallbackError] = useState('')
   const isSupabaseConfigured = Boolean(
     process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   )
   const router = useRouter()
   const supabase = createClientComponentClient()
+  const EMERGENCY_ADMIN_EMAIL = 'ayouz202@gmail.com'
+  const EMERGENCY_ADMIN_PASSWORD = '123admin'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -52,6 +57,32 @@ export default function AdminLoginPage() {
       setError('Erreur réseau lors de l\'envoi du lien. Vérifiez la configuration Supabase et réessayez.')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleFallbackLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setFallbackLoading(true)
+    setFallbackError('')
+
+    try {
+      if (email.trim().toLowerCase() !== EMERGENCY_ADMIN_EMAIL || password !== EMERGENCY_ADMIN_PASSWORD) {
+        setFallbackError('Email ou mot de passe de secours invalide.')
+        return
+      }
+
+      localStorage.setItem(
+        'admin_emergency_session',
+        JSON.stringify({
+          email: EMERGENCY_ADMIN_EMAIL,
+          name: 'Admin Secours',
+          expiresAt: Date.now() + 12 * 60 * 60 * 1000,
+        })
+      )
+
+      router.push('/admin/dashboard')
+    } finally {
+      setFallbackLoading(false)
     }
   }
 
@@ -150,6 +181,45 @@ export default function AdminLoginPage() {
                   <p className="text-red-600 font-medium">⚠ Variables Supabase manquantes dans l'environnement.</p>
                 )}
               </div>
+            </div>
+
+            <div className="mt-8 border-t pt-6">
+              <h3 className="text-sm font-semibold text-gray-900 text-center mb-4">Acces de secours (temporaire)</h3>
+              {fallbackError && (
+                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md mb-4 text-sm">
+                  {fallbackError}
+                </div>
+              )}
+              <form className="space-y-4" onSubmit={handleFallbackLogin}>
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                    Mot de passe admin test
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      id="password"
+                      name="password"
+                      type="password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 text-sm"
+                      placeholder="Mot de passe"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={fallbackLoading}
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-800 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-700 disabled:opacity-50 whitespace-nowrap"
+                >
+                  {fallbackLoading ? 'Connexion...' : 'Connexion de secours'}
+                </button>
+                <p className="text-xs text-gray-500 text-center">
+                  Utilise email: ayouz202@gmail.com et mot de passe test: 123admin
+                </p>
+              </form>
             </div>
           </div>
 

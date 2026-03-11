@@ -21,6 +21,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null)
+  const [isEmergencySession, setIsEmergencySession] = useState(false)
   const [loading, setLoading] = useState(true)
   const supabase = createClientComponentClient()
 
@@ -30,6 +31,23 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const checkAuth = async () => {
     try {
+      const emergencyRaw = localStorage.getItem('admin_emergency_session')
+      if (emergencyRaw) {
+        const emergency = JSON.parse(emergencyRaw)
+        if (emergency?.expiresAt && emergency.expiresAt > Date.now()) {
+          setIsEmergencySession(true)
+          setAdminUser({
+            id: 'emergency',
+            email: emergency.email || 'admin@local',
+            name: emergency.name || 'Admin Secours',
+            is_active: true,
+          })
+          setLoading(false)
+          return
+        }
+        localStorage.removeItem('admin_emergency_session')
+      }
+
       // Vérifier la session Supabase
       const { data: { session }, error: sessionError } = await supabase.auth.getSession()
       
@@ -64,6 +82,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   const handleLogout = async () => {
+    localStorage.removeItem('admin_emergency_session')
+    if (isEmergencySession) {
+      router.push('/admin/login')
+      return
+    }
     await supabase.auth.signOut()
     router.push('/admin/login')
   }
@@ -79,7 +102,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     )
   }
 
-  if (!user || !adminUser) {
+  if ((!user && !isEmergencySession) || !adminUser) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
