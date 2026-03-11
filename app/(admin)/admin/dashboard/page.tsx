@@ -221,32 +221,53 @@ export default function AdminDashboard() {
     )
   }
 
+  const publicationRate = stats?.totalProducts
+    ? Math.round((stats.activeProducts / stats.totalProducts) * 100)
+    : 0
+  const hiddenRate = stats?.totalProducts ? 100 - publicationRate : 0
+  const recentOrdersCount = stats?.recentOrders?.length || 0
+
   return (
     <AdminLayout>
       <div className="px-4 sm:px-0">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Tableau de bord</h1>
-          <button
-            onClick={toggleMaintenance}
-            disabled={maintenanceLoading}
-            className={`px-4 py-2 rounded-md text-sm font-medium text-white whitespace-nowrap ${
-              maintenanceEnabled
-                ? 'bg-red-600 hover:bg-red-700'
-                : 'bg-emerald-600 hover:bg-emerald-700'
-            } disabled:opacity-60`}
-          >
-            <i className="ri-tools-line mr-2"></i>
-            {maintenanceLoading
-              ? 'Mise a jour...'
-              : maintenanceEnabled
-              ? 'Desactiver maintenance'
-              : 'Activer maintenance'}
-          </button>
+        <div className="mb-8 rounded-2xl border border-gray-200 bg-gradient-to-r from-slate-50 to-amber-50 p-6">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">Admin center</p>
+              <h1 className="mt-2 text-3xl font-bold text-gray-900">Tableau de bord</h1>
+              <p className="mt-2 text-sm text-gray-600">
+                Vue globale du catalogue, des commandes et des priorites du jour.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+              <span className="inline-flex items-center rounded-full bg-white/80 border border-gray-200 px-3 py-1 text-xs text-gray-700">
+                <i className="ri-time-line mr-1"></i>
+                Derniere sync: {new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+              </span>
+              <button
+                onClick={toggleMaintenance}
+                disabled={maintenanceLoading}
+                className={`px-4 py-2 rounded-md text-sm font-medium text-white whitespace-nowrap ${
+                  maintenanceEnabled
+                    ? 'bg-red-600 hover:bg-red-700'
+                    : 'bg-emerald-600 hover:bg-emerald-700'
+                } disabled:opacity-60`}
+              >
+                <i className="ri-tools-line mr-2"></i>
+                {maintenanceLoading
+                  ? 'Mise a jour...'
+                  : maintenanceEnabled
+                  ? 'Desactiver maintenance'
+                  : 'Activer maintenance'}
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Statistiques principales */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white overflow-hidden shadow rounded-lg">
+          <div className="bg-white overflow-hidden shadow rounded-lg border-l-4 border-blue-500">
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
@@ -262,13 +283,16 @@ export default function AdminDashboard() {
                     <dd className="text-lg font-medium text-gray-900">
                       {stats?.totalProducts || 0}
                     </dd>
+                    <dd className="text-xs text-gray-500 mt-1">
+                      {stats?.bijouxCount || 0} bijoux / {stats?.montresCount || 0} montres
+                    </dd>
                   </dl>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white overflow-hidden shadow rounded-lg">
+          <div className="bg-white overflow-hidden shadow rounded-lg border-l-4 border-green-500">
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
@@ -284,13 +308,16 @@ export default function AdminDashboard() {
                     <dd className="text-lg font-medium text-gray-900">
                       {stats?.activeProducts || 0}
                     </dd>
+                    <dd className="text-xs text-gray-500 mt-1">
+                      Taux publication: {publicationRate}%
+                    </dd>
                   </dl>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white overflow-hidden shadow rounded-lg">
+          <div className="bg-white overflow-hidden shadow rounded-lg border-l-4 border-amber-500">
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
@@ -306,13 +333,16 @@ export default function AdminDashboard() {
                     <dd className="text-lg font-medium text-gray-900">
                       {stats?.pendingOrders || 0}
                     </dd>
+                    <dd className="text-xs text-gray-500 mt-1">
+                      {recentOrdersCount} demandes recentes
+                    </dd>
                   </dl>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white overflow-hidden shadow rounded-lg">
+          <div className="bg-white overflow-hidden shadow rounded-lg border-l-4 border-purple-500">
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
@@ -327,6 +357,9 @@ export default function AdminDashboard() {
                     </dt>
                     <dd className="text-lg font-medium text-gray-900">
                       {stats?.newProducts30d || 0}
+                    </dd>
+                    <dd className="text-xs text-gray-500 mt-1">
+                      Masques: {hiddenRate}%
                     </dd>
                   </dl>
                 </div>
@@ -354,12 +387,7 @@ export default function AdminDashboard() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">Taux de publication</span>
-                  <span className="font-semibold text-gray-900">
-                    {stats?.totalProducts
-                      ? Math.round((stats.activeProducts / stats.totalProducts) * 100)
-                      : 0}
-                    %
-                  </span>
+                  <span className="font-semibold text-gray-900">{publicationRate}%</span>
                 </div>
                 <div className="flex justify-between items-center border-t pt-3">
                   <span className="text-sm font-medium text-gray-700">Catalogue total</span>
