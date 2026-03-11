@@ -13,6 +13,7 @@ let cachedMaintenance = {
 function isBypassedPath(pathname: string) {
   if (pathname === '/maintenance') return true
   if (pathname.startsWith('/admin')) return true
+  if (pathname.startsWith('/auth')) return true
   if (pathname.startsWith('/_next')) return true
   if (pathname.startsWith('/api/admin')) return true
   if (pathname === '/favicon.ico') return true
@@ -64,13 +65,13 @@ async function getMaintenanceMode() {
 }
 
 export async function middleware(request: NextRequest) {
-  const maintenanceEnabled = FORCE_MAINTENANCE || (await getMaintenanceMode())
-  if (!maintenanceEnabled) {
+  const { pathname } = request.nextUrl
+  if (isBypassedPath(pathname)) {
     return NextResponse.next()
   }
 
-  const { pathname } = request.nextUrl
-  if (isBypassedPath(pathname)) {
+  const maintenanceEnabled = FORCE_MAINTENANCE || (await getMaintenanceMode())
+  if (!maintenanceEnabled) {
     return NextResponse.next()
   }
 
@@ -80,5 +81,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image).*)'],
+  matcher: ['/((?!_next/static|_next/image|admin|auth|api/admin).*)'],
 }
