@@ -18,6 +18,9 @@ interface OrderRequest {
   product: {
     title: string
     priceMAD: number
+    image?: string
+    size?: string
+    quantity: number
   }
   totalAmountMAD: number
 }
@@ -35,6 +38,15 @@ interface OrderRow {
   primary_product_title?: string | null
   primary_product_price_mad?: number | null
   total_amount_mad?: number | null
+  items?: Array<{
+    id?: string | null
+    name?: string | null
+    price?: number | null
+    quantity?: number | null
+    image?: string | null
+    category?: string | null
+    size?: string | null
+  }> | null
 }
 
 export default function AdminOrders() {
@@ -62,6 +74,12 @@ export default function AdminOrders() {
       }
 
       const mapped = ((data || []) as OrderRow[]).map((row) => ({
+        const firstItem = Array.isArray(row.items) && row.items.length > 0 ? row.items[0] : null
+        const totalQuantity = Array.isArray(row.items)
+          ? row.items.reduce((sum, item) => sum + Number(item?.quantity || 0), 0)
+          : 0
+
+        return {
         id: row.id,
         customerName: row.customer_name,
         phone: row.phone,
@@ -72,11 +90,14 @@ export default function AdminOrders() {
         status: row.status,
         createdAt: row.created_at,
         product: {
-          title: row.primary_product_title || 'Produit non renseigne',
-          priceMAD: Number(row.primary_product_price_mad || 0),
+          title: firstItem?.name || row.primary_product_title || 'Produit non renseigne',
+          priceMAD: Number(firstItem?.price || row.primary_product_price_mad || 0),
+          image: firstItem?.image || undefined,
+          size: firstItem?.size || undefined,
+          quantity: totalQuantity > 0 ? totalQuantity : 1,
         },
         totalAmountMAD: Number(row.total_amount_mad || row.primary_product_price_mad || 0),
-      }))
+      }})
 
       setOrders(mapped)
     } catch (error) {
@@ -270,16 +291,40 @@ export default function AdminOrders() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
                       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
-                        <div>
+                        <div className="flex items-start gap-3">
+                          <div className="h-16 w-16 rounded-lg border border-gray-200 bg-gray-50 overflow-hidden flex-shrink-0">
+                            {order.product.image ? (
+                              <img
+                                src={order.product.image}
+                                alt={order.product.title}
+                                className="h-16 w-16 object-cover"
+                              />
+                            ) : (
+                              <div className="h-full w-full flex items-center justify-center text-gray-400">
+                                <i className="ri-image-line"></i>
+                              </div>
+                            )}
+                          </div>
+
+                          <div>
                           <h3 className="text-lg font-semibold text-gray-900">
                             {order.customerName}
                           </h3>
                           <p className="text-sm text-gray-600 mt-1">
                             {order.product.title}
                           </p>
+                          <div className="mt-2 flex items-center gap-2 text-xs">
+                            <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-gray-700">
+                              Qte: {order.product.quantity}
+                            </span>
+                            <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-gray-700">
+                              Taille: {order.product.size || '-'}
+                            </span>
+                          </div>
                           <p className="text-sm font-medium text-amber-700 mt-1">
                             Total: {order.totalAmountMAD.toLocaleString()} MAD
                           </p>
+                          </div>
                         </div>
                         <div className="flex items-center space-x-2">
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${

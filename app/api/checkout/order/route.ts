@@ -6,6 +6,9 @@ interface CheckoutItem {
   name: string
   price: number
   quantity: number
+  image?: string | null
+  category?: string | null
+  size?: string | null
 }
 
 interface CheckoutPayload {
@@ -47,6 +50,9 @@ export async function POST(request: Request) {
       name: item.name,
       price: Number(item.price) || 0,
       quantity: Number(item.quantity) || 1,
+      image: item.image || null,
+      category: item.category || null,
+      size: item.size || null,
     }))
     const totalAmountMAD = normalizedItems.reduce(
       (sum, item) => sum + item.price * item.quantity,
