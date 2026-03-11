@@ -104,6 +104,27 @@ export default function AdminOrders() {
     }
   }
 
+  const handleDeleteOrder = async (orderId: number) => {
+    const confirmed = window.confirm('Supprimer cette commande ? Cette action est irreversible.')
+    if (!confirmed) return
+
+    try {
+      const { error } = await supabase
+        .from('order_requests')
+        .delete()
+        .eq('id', orderId)
+
+      if (error) {
+        throw error
+      }
+
+      setOrders(orders.filter((order) => order.id !== orderId))
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error)
+      alert('Erreur lors de la suppression de la commande.')
+    }
+  }
+
   const filteredOrders = orders.filter(order => {
     if (filter === 'all') return true
     return order.status === filter.toUpperCase()
@@ -270,6 +291,14 @@ export default function AdminOrders() {
                         Remettre en attente
                       </button>
                     )}
+
+                    <button
+                      onClick={() => handleDeleteOrder(order.id)}
+                      className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm whitespace-nowrap"
+                    >
+                      <i className="ri-delete-bin-line mr-1"></i>
+                      Supprimer
+                    </button>
                   </div>
                 </div>
               </li>
