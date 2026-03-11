@@ -205,7 +205,6 @@ export default function CheckoutPage() {
               <CheckoutForm 
                 onSubmit={handleOrderSubmit}
                 isLoading={isLoading}
-                submitUrl="/api/checkout/order"
               />
               {submitError && (
                 <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4">

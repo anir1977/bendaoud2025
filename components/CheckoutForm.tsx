@@ -6,10 +6,9 @@ import { useState } from 'react';
 interface CheckoutFormProps {
   onSubmit: (formData: any) => void;
   isLoading: boolean;
-  submitUrl: string;
 }
 
-export default function CheckoutForm({ onSubmit, isLoading, submitUrl }: CheckoutFormProps) {
+export default function CheckoutForm({ onSubmit, isLoading }: CheckoutFormProps) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -50,23 +49,7 @@ export default function CheckoutForm({ onSubmit, isLoading, submitUrl }: Checkou
     
     if (!validateForm()) return;
 
-    try {
-      const response = await fetch(submitUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-      });
-
-      if (response.ok) {
-        onSubmit(formData);
-      } else {
-        throw new Error('Erreur lors de l\'envoi');
-      }
-    } catch (error) {
-      console.error('Erreur:', error);
-    }
+    onSubmit(formData);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
