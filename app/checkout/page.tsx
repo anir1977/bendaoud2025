@@ -8,6 +8,7 @@ import Footer from '@/components/Footer';
 import CheckoutSteps from '@/components/CheckoutSteps';
 import CheckoutForm from '@/components/CheckoutForm';
 import CheckoutSummary from '@/components/CheckoutSummary';
+import { useCart } from '@/components/CartProvider';
 
 interface CartItem {
   id: string;
@@ -23,36 +24,14 @@ export default function CheckoutPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [orderConfirmed, setOrderConfirmed] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: '1',
-      name: 'Bague Solitaire Diamant',
-      price: 15500,
-      quantity: 1,
-      image: 'https://readdy.ai/api/search-image?query=elegant%20diamond%20solitaire%20ring%20on%20white%20background%2C%20luxury%20jewelry%20photography%2C%20professional%20lighting%2C%20clean%20minimalist%20style%2C%20high-end%20jewelry%20store%20display&width=400&height=400&seq=1&orientation=squarish',
-      category: 'Bagues'
-    },
-    {
-      id: '2',
-      name: 'Collier Perles Akoya',
-      price: 8900,
-      quantity: 1,
-      image: 'https://readdy.ai/api/search-image?query=elegant%20akoya%20pearl%20necklace%20on%20white%20background%2C%20luxury%20jewelry%20photography%2C%20professional%20lighting%2C%20clean%20minimalist%20style%2C%20high-end%20jewelry%20store%20display&width=400&height=400&seq=2&orientation=squarish',
-      category: 'Colliers'
-    }
-  ]);
+  const { items: cartItems, updateQuantity, removeItem, clearCart } = useCart();
 
   const handleUpdateQuantity = (id: string, quantity: number) => {
-    setCartItems(items => 
-      items.map(item => 
-        item.id === id ? { ...item, quantity } : item
-      )
-    );
+    updateQuantity(id, quantity);
   };
 
   const handleRemoveItem = (id: string) => {
-    setCartItems(items => items.filter(item => item.id !== id));
+    removeItem(id);
   };
 
   const handleOrderSubmit = async (formData: any) => {
@@ -84,6 +63,7 @@ export default function CheckoutPage() {
       setIsLoading(false);
       setOrderConfirmed(true);
       setCurrentStep(4);
+      clearCart();
     } catch (error: any) {
       setIsLoading(false);
       setSubmitError(error?.message || 'Une erreur est survenue.');

@@ -4,6 +4,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useCart } from '@/components/CartProvider'
 
 interface Product {
   id: string
@@ -24,6 +25,7 @@ interface ProductDetailProps {
 export default function ProductDetail({ product }: ProductDetailProps) {
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
+  const { addItem } = useCart()
 
   const handleWhatsAppContact = () => {
     const message = `Bonjour, je suis intéressé(e) par le produit: ${product.title} - ${product.price_mad.toLocaleString('fr-MA')} MAD`
@@ -56,6 +58,20 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         alert('Lien copié dans le presse-papiers!')
       })
     }
+  }
+
+  const handleAddToCart = () => {
+    addItem(
+      {
+        id: product.id,
+        name: product.title,
+        price: product.price_mad,
+        image: product.images?.[0] || '',
+        category: product.type,
+      },
+      quantity
+    )
+    alert('Produit ajoute au panier')
   }
 
   return (
@@ -180,6 +196,14 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
               {/* Action Buttons */}
               <div className="space-y-3">
+                <button
+                  onClick={handleAddToCart}
+                  className="w-full bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-md font-medium flex items-center justify-center space-x-2 transition-colors whitespace-nowrap"
+                >
+                  <i className="ri-shopping-bag-line text-xl"></i>
+                  <span>Ajouter au panier</span>
+                </button>
+
                 <button
                   onClick={handleWhatsAppContact}
                   className="w-full bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md font-medium flex items-center justify-center space-x-2 transition-colors whitespace-nowrap"

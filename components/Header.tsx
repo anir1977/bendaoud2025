@@ -3,9 +3,11 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useCart } from '@/components/CartProvider';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { totalItems } = useCart();
 
   return (
     <header className="bg-white shadow-sm border-b sticky top-0 z-40">
@@ -41,6 +43,17 @@ export default function Header() {
               <div className="w-5 h-5 flex items-center justify-center">
                 <i className="ri-search-line text-xl"></i>
               </div>
+            </Link>
+
+            <Link href="/checkout" className="p-2 rounded-lg hover:bg-gray-100 cursor-pointer relative">
+              <div className="w-5 h-5 flex items-center justify-center">
+                <i className="ri-shopping-bag-line text-xl"></i>
+              </div>
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-yellow-600 text-white text-[10px] font-semibold rounded-full flex items-center justify-center">
+                  {totalItems > 99 ? '99+' : totalItems}
+                </span>
+              )}
             </Link>
             
             <button 
