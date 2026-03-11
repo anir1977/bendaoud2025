@@ -40,7 +40,8 @@ interface OrderRow {
 export default function AdminOrders() {
   const [orders, setOrders] = useState<OrderRequest[]>([])
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState<'all' | 'pending' | 'processed'>('all')
+  const [filter, setFilter] = useState<'all' | 'pending' | 'processed' | 'canceled'>('all')
+  const [searchQuery, setSearchQuery] = useState('')
   const supabase = createClient()
 
   useEffect(() => {
@@ -85,7 +86,7 @@ export default function AdminOrders() {
     }
   }
 
-  const handleStatusChange = async (orderId: number, newStatus: 'PENDING' | 'PROCESSED') => {
+  const handleStatusChange = async (orderId: number, newStatus: 'PENDING' | 'PROCESSED' | 'CANCELED') => {
     try {
       const { error } = await supabase
         .from('order_requests')
@@ -125,10 +126,40 @@ export default function AdminOrders() {
     }
   }
 
-  const filteredOrders = orders.filter(order => {
-    if (filter === 'all') return true
-    return order.status === filter.toUpperCase()
+  const filteredOrders = orders.filter((order) => {
+    const statusMatch =
+      filter === 'all' ? true : order.status === filter.toUpperCase()
+
+    const q = searchQuery.trim().toLowerCase()
+    const textMatch =
+      q.length === 0
+        ? true
+        : [
+            order.customerName,
+            order.phone,
+            order.email || '',
+            order.city,
+            order.product.title,
+          ]
+            .join(' ')
+            .toLowerCase()
+            .includes(q)
+
+    return statusMatch && textMatch
   })
+
+  const pendingCount = orders.filter((o) => o.status === 'PENDING').length
+  const processedCount = orders.filter((o) => o.status === 'PROCESSED').length
+  const canceledCount = orders.filter((o) => o.status === 'CANCELED').length
+  const todayCount = orders.filter((o) => {
+    const d = new Date(o.createdAt)
+    const now = new Date()
+    return (
+      d.getDate() === now.getDate() &&
+      d.getMonth() === now.getMonth() &&
+      d.getFullYear() === now.getFullYear()
+    )
+  }).length
 
   if (loading) {
     return (
@@ -148,21 +179,53 @@ export default function AdminOrders() {
   return (
     <AdminLayout>
       <div className="px-4 sm:px-0">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Demandes d'Achat</h1>
+        <div className="mb-8 rounded-2xl border border-gray-200 bg-gradient-to-r from-slate-50 to-amber-50 p-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">Commandes clients</p>
+          <h1 className="mt-2 text-3xl font-bold text-gray-900">Demandes d'achat</h1>
           <p className="mt-2 text-sm text-gray-600">
-            Gérez les demandes de vos clients
+            Suivez et traitez les commandes en temps reel avec une vue centralisee.
           </p>
         </div>
 
-        <div className="mb-6">
-          <div className="flex space-x-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="rounded-xl border border-gray-200 bg-white p-4">
+            <p className="text-xs text-gray-500 uppercase tracking-wide">Total</p>
+            <p className="mt-1 text-2xl font-bold text-gray-900">{orders.length}</p>
+          </div>
+          <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+            <p className="text-xs text-amber-700 uppercase tracking-wide">En attente</p>
+            <p className="mt-1 text-2xl font-bold text-amber-700">{pendingCount}</p>
+          </div>
+          <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+            <p className="text-xs text-emerald-700 uppercase tracking-wide">Traitées</p>
+            <p className="mt-1 text-2xl font-bold text-emerald-700">{processedCount}</p>
+          </div>
+          <div className="rounded-xl border border-sky-200 bg-sky-50 p-4">
+            <p className="text-xs text-sky-700 uppercase tracking-wide">Aujourd'hui</p>
+            <p className="mt-1 text-2xl font-bold text-sky-700">{todayCount}</p>
+          </div>
+        </div>
+
+        <div className="mb-6 rounded-xl border border-gray-200 bg-white p-4">
+          <div className="flex flex-col lg:flex-row lg:items-center gap-3">
+            <div className="relative flex-1">
+              <i className="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Rechercher par client, telephone, email, ville, produit..."
+                className="w-full rounded-lg border border-gray-300 pl-10 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+              />
+            </div>
+
+            <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setFilter('all')}
               className={`px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap ${
                 filter === 'all' 
                   ? 'bg-amber-600 text-white' 
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
               Toutes ({orders.length})
@@ -172,40 +235,49 @@ export default function AdminOrders() {
               className={`px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap ${
                 filter === 'pending' 
                   ? 'bg-yellow-600 text-white' 
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              En attente ({orders.filter(o => o.status === 'PENDING').length})
+              En attente ({pendingCount})
             </button>
             <button
               onClick={() => setFilter('processed')}
               className={`px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap ${
                 filter === 'processed' 
                   ? 'bg-green-600 text-white' 
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              Traitées ({orders.filter(o => o.status === 'PROCESSED').length})
+              Traitées ({processedCount})
             </button>
+            <button
+              onClick={() => setFilter('canceled')}
+              className={`px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap ${
+                filter === 'canceled'
+                  ? 'bg-gray-700 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Annulées ({canceledCount})
+            </button>
+            </div>
           </div>
         </div>
 
-        <div className="bg-white shadow overflow-hidden sm:rounded-md">
-          <ul className="divide-y divide-gray-200">
+        <div className="space-y-4">
             {filteredOrders.map((order) => (
-              <li key={order.id}>
-                <div className="px-4 py-6">
-                  <div className="flex items-center justify-between">
+              <div key={order.id} className="bg-white shadow rounded-xl border border-gray-200 p-5">
+                  <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
-                      <div className="flex items-center justify-between">
+                      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
                         <div>
-                          <h3 className="text-lg font-medium text-gray-900">
+                          <h3 className="text-lg font-semibold text-gray-900">
                             {order.customerName}
                           </h3>
-                          <p className="text-sm text-gray-600">
-                            {order.product.title} • {order.product.priceMAD.toLocaleString()} MAD
+                          <p className="text-sm text-gray-600 mt-1">
+                            {order.product.title}
                           </p>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-sm font-medium text-amber-700 mt-1">
                             Total: {order.totalAmountMAD.toLocaleString()} MAD
                           </p>
                         </div>
@@ -213,11 +285,17 @@ export default function AdminOrders() {
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                             order.status === 'PENDING' 
                               ? 'bg-yellow-100 text-yellow-800' 
-                              : 'bg-green-100 text-green-800'
+                              : order.status === 'PROCESSED'
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-gray-100 text-gray-700'
                           }`}>
-                            {order.status === 'PENDING' ? 'En attente' : 'Traitée'}
+                            {order.status === 'PENDING'
+                              ? 'En attente'
+                              : order.status === 'PROCESSED'
+                              ? 'Traitée'
+                              : 'Annulée'}
                           </span>
-                          <span className="text-sm text-gray-500">
+                          <span className="text-xs text-gray-500">
                             {new Date(order.createdAt).toLocaleDateString('fr-FR')}
                           </span>
                         </div>
@@ -255,7 +333,7 @@ export default function AdminOrders() {
                     </div>
                   </div>
                   
-                  <div className="mt-4 flex items-center space-x-3">
+                  <div className="mt-5 flex flex-wrap items-center gap-2">
                     <a
                       href={`https://wa.me/212${order.phone.substring(1)}?text=Bonjour ${order.customerName}, concernant votre demande pour ${order.product.title}`}
                       target="_blank"
@@ -292,6 +370,16 @@ export default function AdminOrders() {
                       </button>
                     )}
 
+                    {order.status !== 'CANCELED' && (
+                      <button
+                        onClick={() => handleStatusChange(order.id, 'CANCELED')}
+                        className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm whitespace-nowrap"
+                      >
+                        <i className="ri-close-circle-line mr-1"></i>
+                        Annuler
+                      </button>
+                    )}
+
                     <button
                       onClick={() => handleDeleteOrder(order.id)}
                       className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm whitespace-nowrap"
@@ -300,10 +388,8 @@ export default function AdminOrders() {
                       Supprimer
                     </button>
                   </div>
-                </div>
-              </li>
+              </div>
             ))}
-          </ul>
         </div>
 
         {filteredOrders.length === 0 && (
