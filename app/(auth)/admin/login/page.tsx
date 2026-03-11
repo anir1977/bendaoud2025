@@ -29,10 +29,12 @@ export default function AdminLoginPage() {
     }
 
     try {
+      const callbackUrl = `${window.location.origin}/auth/callback?next=${encodeURIComponent('/admin/dashboard')}`
+
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/admin`
+          emailRedirectTo: callbackUrl
         }
       })
 
