@@ -66,14 +66,35 @@ export default function AdminDashboard() {
 
   const fetchStats = async () => {
     try {
-      const { data: productsData, error: productsError } = await supabase
-        .from('articles')
-        .select('id, title, category_slug, is_published, created_at')
-        .eq('type', 'product')
-        .order('created_at', { ascending: false })
+      const [
+        { data: productsData, error: productsError },
+        { data: pendingRows, error: pendingError },
+        { data: ordersData, error: ordersError },
+      ] = await Promise.all([
+        supabase
+          .from('articles')
+          .select('id, title, category_slug, is_published, created_at')
+          .eq('type', 'product')
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('order_requests')
+          .select('id')
+          .eq('status', 'PENDING'),
+        supabase
+          .from('order_requests')
+          .select('id, customer_name, primary_product_title, status, created_at')
+          .order('created_at', { ascending: false })
+          .limit(5),
+      ])
 
       if (productsError) {
-        throw productsError
+        console.error('Erreur chargement produits dashboard:', productsError)
+      }
+      if (pendingError) {
+        console.error('Erreur chargement demandes en attente:', pendingError)
+      }
+      if (ordersError) {
+        console.error('Erreur chargement demandes recentes:', ordersError)
       }
 
       const products = (productsData || []) as ProductRow[]
@@ -122,24 +143,8 @@ export default function AdminDashboard() {
         }
       })
 
-      let pendingOrders = 0
+      let pendingOrders = (pendingRows || []).length
       let recentOrders: RecentOrder[] = []
-
-      const [{ count, error: pendingError }, { data: ordersData, error: ordersError }] = await Promise.all([
-        supabase
-          .from('order_requests')
-          .select('id', { count: 'exact', head: true })
-          .eq('status', 'PENDING'),
-        supabase
-          .from('order_requests')
-          .select('id, customer_name, primary_product_title, status, created_at')
-          .order('created_at', { ascending: false })
-          .limit(5),
-      ])
-
-      if (!pendingError) {
-        pendingOrders = count || 0
-      }
 
       if (!ordersError) {
         recentOrders = (ordersData || []).map((order: any) => ({
