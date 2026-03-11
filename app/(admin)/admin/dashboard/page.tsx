@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react'
 import AdminLayout from '@/components/AdminLayout'
 import { createClient } from '@/lib/supabase/client'
+import staticProductsData from '@/lib/products-data.json'
 
 interface ProductRow {
   id: string
@@ -96,7 +97,17 @@ export default function AdminDashboard() {
         console.error('Erreur chargement demandes recentes:', ordersError)
       }
 
-      const products = (productsData || []) as ProductRow[]
+      const products = (productsData && productsData.length > 0
+        ? (productsData as ProductRow[])
+        : (staticProductsData as any[])
+            .filter((p) => p.type === 'product')
+            .map((p) => ({
+              id: String(p.id || p.slug),
+              title: p.title,
+              category_slug: p.category_slug || 'unknown',
+              is_published: Boolean(p.is_published),
+              created_at: '',
+            }))) as ProductRow[]
       const now = new Date()
       const thirtyDaysAgo = new Date(now)
       thirtyDaysAgo.setDate(now.getDate() - 30)
@@ -106,7 +117,11 @@ export default function AdminDashboard() {
       const hiddenProducts = totalProducts - activeProducts
       const bijouxCount = products.filter((p) => p.category_slug !== 'montres').length
       const montresCount = products.filter((p) => p.category_slug === 'montres').length
-      const newProducts30d = products.filter((p) => new Date(p.created_at) >= thirtyDaysAgo).length
+      const newProducts30d = products.filter((p) => {
+        if (!p.created_at) return false
+        const d = new Date(p.created_at)
+        return !Number.isNaN(d.getTime()) && d >= thirtyDaysAgo
+      }).length
 
       const recentProducts: RecentProduct[] = products.slice(0, 5).map((product) => ({
         id: product.id,
@@ -134,7 +149,7 @@ export default function AdminDashboard() {
         const date = new Date(now)
         date.setDate(now.getDate() - (6 - index))
         const key = date.toISOString().slice(0, 10)
-        const count = products.filter((product) => product.created_at.slice(0, 10) === key).length
+        const count = products.filter((product) => product.created_at && product.created_at.slice(0, 10) === key).length
 
         return {
           date: weekDays[date.getDay()],

@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import AdminLayout from '@/components/AdminLayout'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import productsData from '@/lib/products-data.json'
 
 interface Product {
   id: string
@@ -18,6 +19,7 @@ interface Product {
   created_at: string
   description?: string
   type: string
+  source?: 'db' | 'static'
 }
 
 interface Category {
@@ -32,6 +34,7 @@ export default function AdminProducts() {
   const [filter, setFilter] = useState('all')
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [showDescriptionModal, setShowDescriptionModal] = useState(false)
+  const [usingStaticFallback, setUsingStaticFallback] = useState(false)
   const supabase = createClient()
 
   const categories: Category[] = [
@@ -58,12 +61,54 @@ export default function AdminProducts() {
 
       if (error) {
         console.error('Erreur lors du chargement des produits:', error)
+      }
+
+      if (!data || data.length === 0) {
+        const staticProducts = (productsData as any[])
+          .filter((p) => p.type === 'product')
+          .map((p) => ({
+            id: String(p.id || p.slug),
+            title: p.title,
+            slug: p.slug,
+            brand: p.brand,
+            price_mad: p.price_mad,
+            images: p.images || [],
+            is_published: Boolean(p.is_published),
+            category_slug: p.category_slug || 'unknown',
+            created_at: new Date(0).toISOString(),
+            description: p.description,
+            type: p.type || 'product',
+            source: 'static' as const,
+          }))
+
+        setProducts(staticProducts)
+        setUsingStaticFallback(true)
         return
       }
 
-      setProducts(data || [])
+      setProducts((data || []).map((p: any) => ({ ...p, source: 'db' as const })))
+      setUsingStaticFallback(false)
     } catch (error) {
       console.error('Erreur lors du chargement des produits:', error)
+      const staticProducts = (productsData as any[])
+        .filter((p) => p.type === 'product')
+        .map((p) => ({
+          id: String(p.id || p.slug),
+          title: p.title,
+          slug: p.slug,
+          brand: p.brand,
+          price_mad: p.price_mad,
+          images: p.images || [],
+          is_published: Boolean(p.is_published),
+          category_slug: p.category_slug || 'unknown',
+          created_at: new Date(0).toISOString(),
+          description: p.description,
+          type: p.type || 'product',
+          source: 'static' as const,
+        }))
+
+      setProducts(staticProducts)
+      setUsingStaticFallback(true)
     } finally {
       setLoading(false)
     }
@@ -162,6 +207,13 @@ export default function AdminProducts() {
             Nouveau Produit
           </Link>
         </div>
+
+        {usingStaticFallback && (
+          <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            <i className="ri-information-line mr-2"></i>
+            Mode catalogue statique actif: les actions Modifier / Publier / Supprimer sont desactivees.
+          </div>
+        )}
 
         <div className="mb-6">
           <div className="flex space-x-4">
@@ -263,25 +315,31 @@ export default function AdminProducts() {
                         </button>
                         <button
                           onClick={() => togglePublishStatus(product.id, product.is_published)}
+                          disabled={product.source === 'static'}
                           className={`text-sm font-medium whitespace-nowrap ${
                             product.is_published 
                               ? 'text-orange-600 hover:text-orange-900' 
                               : 'text-green-600 hover:text-green-900'
-                          }`}
+                          } disabled:opacity-40 disabled:cursor-not-allowed`}
                         >
                           <i className={`mr-1 ${product.is_published ? 'ri-eye-off-line' : 'ri-eye-line'}`}></i>
                           {product.is_published ? 'Masquer' : 'Publier'}
                         </button>
                         <Link
                           href={`/admin/produits/${product.id}/edit`}
-                          className="text-amber-600 hover:text-amber-900 text-sm font-medium whitespace-nowrap"
+                          className={`text-sm font-medium whitespace-nowrap ${
+                            product.source === 'static'
+                              ? 'text-gray-400 pointer-events-none'
+                              : 'text-amber-600 hover:text-amber-900'
+                          }`}
                         >
                           <i className="ri-edit-line mr-1"></i>
                           Modifier
                         </Link>
                         <button
                           onClick={() => handleDelete(product.id)}
-                          className="text-red-600 hover:text-red-900 text-sm font-medium whitespace-nowrap"
+                          disabled={product.source === 'static'}
+                          className="text-red-600 hover:text-red-900 text-sm font-medium whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                           <i className="ri-delete-bin-line mr-1"></i>
                           Supprimer
