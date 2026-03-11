@@ -18,25 +18,9 @@ interface Product {
 }
 
 export async function generateStaticParams() {
-  // استخدام الـ slugs الفعلية من ملف البيانات
-  return [
-    { slug: 'bague-solitaire-diamant-or-18k' },
-    { slug: 'alliance-or-jaune-18k-classique' },
-    { slug: 'bracelet-maille-or-blanc-18k' },
-    { slug: 'gourmette-or-rose-18k-homme' },
-    { slug: 'collier-perles-or-rose-18k' },
-    { slug: 'parure-complete-or-jaune-18k' },
-    { slug: 'sautoir-chaine-or-blanc-18k' },
-    { slug: 'boucles-oreilles-diamants-or-blanc' },
-    { slug: 'bague-emeraude-or-jaune-18k' },
-    { slug: 'bracelet-tennis-diamants-or-blanc' },
-    { slug: 'montre-tissot-prc-200-homme' },
-    { slug: 'montre-guess-femme-dore' },
-    { slug: 'montre-festina-chronographe-sport' },
-    { slug: 'montre-tissot-seastar-automatique' },
-    { slug: 'montre-guess-homme-chronographe' },
-    { slug: 'montre-festina-femme-elegance' }
-  ]
+  return productsData
+    .filter((product) => product.type === 'product' && product.is_published)
+    .map((product) => ({ slug: product.slug }))
 }
 
 export default function ProductPage({ params }: { params: { slug: string } }) {
