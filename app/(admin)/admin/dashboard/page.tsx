@@ -74,7 +74,6 @@ export default function AdminDashboard() {
         supabase
           .from('articles')
           .select('id, title, category_slug, is_published, created_at')
-          .eq('type', 'product')
           .order('created_at', { ascending: false }),
         supabase
           .from('order_requests')

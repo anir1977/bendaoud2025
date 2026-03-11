@@ -54,7 +54,6 @@ export default function AdminProducts() {
       const { data, error } = await supabase
         .from('articles')
         .select('*')
-        .eq('type', 'product')
         .order('created_at', { ascending: false })
 
       if (error) {
@@ -275,7 +274,7 @@ export default function AdminProducts() {
                         </button>
                         <Link
                           href={`/admin/produits/${product.id}/edit`}
-                          className="text-amber-600 hover: text-amber-900 text-sm font-medium whitespace-nowrap"
+                          className="text-amber-600 hover:text-amber-900 text-sm font-medium whitespace-nowrap"
                         >
                           <i className="ri-edit-line mr-1"></i>
                           Modifier
