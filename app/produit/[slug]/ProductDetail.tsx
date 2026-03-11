@@ -26,6 +26,16 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   const [quantity, setQuantity] = useState(1)
   const { addItem } = useCart()
 
+  const fallbackImage =
+    'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800"><rect width="100%25" height="100%25" fill="%23f3f4f6"/><text x="50%25" y="50%25" fill="%239ca3af" font-family="Arial, sans-serif" font-size="26" text-anchor="middle" dominant-baseline="middle">Image indisponible</text></svg>'
+
+  const handleImageError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    const img = event.currentTarget
+    if (img.src !== fallbackImage) {
+      img.src = fallbackImage
+    }
+  }
+
   const handleWhatsAppContact = () => {
     const message = `Bonjour, je suis intéressé(e) par le produit: ${product.title} - ${product.price_mad.toLocaleString('fr-MA')} MAD`
     const whatsappUrl = `https://wa.me/212600000000?text=${encodeURIComponent(message)}`
@@ -102,6 +112,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                   loading="eager"
                   decoding="async"
                   referrerPolicy="no-referrer"
+                  onError={handleImageError}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
@@ -130,6 +141,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                       loading="lazy"
                       decoding="async"
                       referrerPolicy="no-referrer"
+                      onError={handleImageError}
                     />
                   </button>
                 ))}
