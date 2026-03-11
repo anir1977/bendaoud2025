@@ -35,6 +35,7 @@ interface EditProductClientProps {
 }
 
 export default function EditProductClient({ productId }: EditProductClientProps) {
+  const STATIC_STORAGE_KEY = 'admin_products_override_v1'
   const router = useRouter()
   
   const [loading, setLoading] = useState(false)
@@ -95,8 +96,58 @@ export default function EditProductClient({ productId }: EditProductClientProps)
           size: foundProduct.size || ''
         })
       } else {
-        alert('Produit non trouvé')
-        router.push('/admin/produits')
+        // Fallback: charger depuis le catalogue statique admin
+        const staticProducts = JSON.parse(localStorage.getItem(STATIC_STORAGE_KEY) || '[]')
+        const staticProduct = staticProducts.find((p: any) => String(p.id) === productId)
+
+        if (!staticProduct) {
+          alert('Produit non trouvé')
+          router.push('/admin/produits')
+          return
+        }
+
+        const categoryMap: Record<string, string> = {
+          bagues: '1',
+          solitaires: '2',
+          bracelets: '3',
+          colliers: '4',
+          montres: '5',
+        }
+
+        const converted: Product = {
+          id: String(staticProduct.id),
+          title: staticProduct.title,
+          slug: staticProduct.slug,
+          brand: staticProduct.brand || '',
+          description: staticProduct.description || '',
+          priceMAD: Number(staticProduct.price_mad || 0),
+          categoryId: categoryMap[staticProduct.category_slug] || '1',
+          metalColor: '',
+          carat: '18K',
+          status: staticProduct.is_published ? 'ACTIVE' : 'HIDDEN',
+          images: staticProduct.images || [''],
+          createdAt: staticProduct.created_at || new Date().toISOString(),
+          tags: [],
+          aiEnhanced: false,
+          size: '',
+        }
+
+        setProduct(converted)
+        setFormData({
+          title: converted.title,
+          slug: converted.slug,
+          brand: converted.brand || '',
+          description: converted.description,
+          priceMAD: converted.priceMAD.toString(),
+          categoryId: converted.categoryId,
+          metalColor: converted.metalColor || '',
+          carat: '18K',
+          status: converted.status,
+          images: converted.images.length > 0 ? converted.images : [''],
+          tags: converted.tags || [],
+          aiEnhanced: converted.aiEnhanced || false,
+          size: converted.size || ''
+        })
       }
     } catch (error) {
       console.error('Erreur lors du chargement du produit:', error)
@@ -180,6 +231,38 @@ export default function EditProductClient({ productId }: EditProductClientProps)
         p.id === productId ? updatedProduct : p
       )
       localStorage.setItem('products', JSON.stringify(updatedProducts))
+
+      // Synchroniser aussi le fallback statique admin s'il existe
+      const staticRaw = localStorage.getItem(STATIC_STORAGE_KEY)
+      if (staticRaw) {
+        const staticProducts = JSON.parse(staticRaw)
+        if (Array.isArray(staticProducts)) {
+          const reverseCategoryMap: Record<string, string> = {
+            '1': 'bagues',
+            '2': 'solitaires',
+            '3': 'bracelets',
+            '4': 'colliers',
+            '5': 'montres',
+          }
+
+          const nextStatic = staticProducts.map((p: any) =>
+            String(p.id) === String(productId)
+              ? {
+                  ...p,
+                  title: updatedProduct.title,
+                  slug: updatedProduct.slug,
+                  brand: updatedProduct.brand,
+                  description: updatedProduct.description,
+                  price_mad: updatedProduct.priceMAD,
+                  images: updatedProduct.images,
+                  is_published: updatedProduct.status === 'ACTIVE',
+                  category_slug: reverseCategoryMap[updatedProduct.categoryId] || p.category_slug,
+                }
+              : p
+          )
+          localStorage.setItem(STATIC_STORAGE_KEY, JSON.stringify(nextStatic))
+        }
+      }
       return true
     } catch (error) {
       console.error('Erreur lors de la mise à jour:', error)

@@ -29,6 +29,7 @@ interface Category {
 }
 
 export default function AdminProducts() {
+  const STATIC_STORAGE_KEY = 'admin_products_override_v1'
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
@@ -52,6 +53,41 @@ export default function AdminProducts() {
     fetchProducts()
   }, [])
 
+  const getInitialStaticProducts = (): Product[] => {
+    try {
+      const stored = localStorage.getItem(STATIC_STORAGE_KEY)
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        if (Array.isArray(parsed)) {
+          return parsed
+        }
+      }
+    } catch {
+      // Ignore invalid JSON
+    }
+
+    return (productsData as any[])
+      .filter((p) => p.type === 'product')
+      .map((p) => ({
+        id: String(p.id || p.slug),
+        title: p.title,
+        slug: p.slug,
+        brand: p.brand,
+        price_mad: p.price_mad,
+        images: p.images || [],
+        is_published: Boolean(p.is_published),
+        category_slug: p.category_slug || 'unknown',
+        created_at: new Date(0).toISOString(),
+        description: p.description,
+        type: p.type || 'product',
+        source: 'static' as const,
+      }))
+  }
+
+  const persistStaticProducts = (nextProducts: Product[]) => {
+    localStorage.setItem(STATIC_STORAGE_KEY, JSON.stringify(nextProducts))
+  }
+
   const fetchProducts = async () => {
     try {
       const { data, error } = await supabase
@@ -64,22 +100,7 @@ export default function AdminProducts() {
       }
 
       if (!data || data.length === 0) {
-        const staticProducts = (productsData as any[])
-          .filter((p) => p.type === 'product')
-          .map((p) => ({
-            id: String(p.id || p.slug),
-            title: p.title,
-            slug: p.slug,
-            brand: p.brand,
-            price_mad: p.price_mad,
-            images: p.images || [],
-            is_published: Boolean(p.is_published),
-            category_slug: p.category_slug || 'unknown',
-            created_at: new Date(0).toISOString(),
-            description: p.description,
-            type: p.type || 'product',
-            source: 'static' as const,
-          }))
+        const staticProducts = getInitialStaticProducts()
 
         setProducts(staticProducts)
         setUsingStaticFallback(true)
@@ -90,22 +111,7 @@ export default function AdminProducts() {
       setUsingStaticFallback(false)
     } catch (error) {
       console.error('Erreur lors du chargement des produits:', error)
-      const staticProducts = (productsData as any[])
-        .filter((p) => p.type === 'product')
-        .map((p) => ({
-          id: String(p.id || p.slug),
-          title: p.title,
-          slug: p.slug,
-          brand: p.brand,
-          price_mad: p.price_mad,
-          images: p.images || [],
-          is_published: Boolean(p.is_published),
-          category_slug: p.category_slug || 'unknown',
-          created_at: new Date(0).toISOString(),
-          description: p.description,
-          type: p.type || 'product',
-          source: 'static' as const,
-        }))
+      const staticProducts = getInitialStaticProducts()
 
       setProducts(staticProducts)
       setUsingStaticFallback(true)
@@ -116,6 +122,14 @@ export default function AdminProducts() {
 
   const handleDelete = async (id: string) => {
     if (confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
+      const target = products.find((p) => p.id === id)
+      if (target?.source === 'static') {
+        const next = products.filter((p) => p.id !== id)
+        setProducts(next)
+        persistStaticProducts(next)
+        return
+      }
+
       try {
         const { error } = await supabase
           .from('articles')
@@ -138,6 +152,16 @@ export default function AdminProducts() {
   }
 
   const togglePublishStatus = async (id: string, currentStatus: boolean) => {
+    const target = products.find((p) => p.id === id)
+    if (target?.source === 'static') {
+      const next = products.map((p) =>
+        p.id === id ? { ...p, is_published: !currentStatus } : p
+      )
+      setProducts(next)
+      persistStaticProducts(next)
+      return
+    }
+
     try {
       const { error } = await supabase
         .from('articles')
@@ -211,7 +235,7 @@ export default function AdminProducts() {
         {usingStaticFallback && (
           <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
             <i className="ri-information-line mr-2"></i>
-            Mode catalogue statique actif: les actions Modifier / Publier / Supprimer sont desactivees.
+            Mode catalogue statique actif: les actions sont enregistrees localement (admin uniquement).
           </div>
         )}
 
@@ -315,31 +339,25 @@ export default function AdminProducts() {
                         </button>
                         <button
                           onClick={() => togglePublishStatus(product.id, product.is_published)}
-                          disabled={product.source === 'static'}
                           className={`text-sm font-medium whitespace-nowrap ${
                             product.is_published 
                               ? 'text-orange-600 hover:text-orange-900' 
                               : 'text-green-600 hover:text-green-900'
-                          } disabled:opacity-40 disabled:cursor-not-allowed`}
+                          }`}
                         >
                           <i className={`mr-1 ${product.is_published ? 'ri-eye-off-line' : 'ri-eye-line'}`}></i>
                           {product.is_published ? 'Masquer' : 'Publier'}
                         </button>
                         <Link
                           href={`/admin/produits/${product.id}/edit`}
-                          className={`text-sm font-medium whitespace-nowrap ${
-                            product.source === 'static'
-                              ? 'text-gray-400 pointer-events-none'
-                              : 'text-amber-600 hover:text-amber-900'
-                          }`}
+                          className="text-amber-600 hover:text-amber-900 text-sm font-medium whitespace-nowrap"
                         >
                           <i className="ri-edit-line mr-1"></i>
                           Modifier
                         </Link>
                         <button
                           onClick={() => handleDelete(product.id)}
-                          disabled={product.source === 'static'}
-                          className="text-red-600 hover:text-red-900 text-sm font-medium whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
+                          className="text-red-600 hover:text-red-900 text-sm font-medium whitespace-nowrap"
                         >
                           <i className="ri-delete-bin-line mr-1"></i>
                           Supprimer
