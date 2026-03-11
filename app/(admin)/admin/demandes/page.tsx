@@ -73,31 +73,32 @@ export default function AdminOrders() {
         return
       }
 
-      const mapped = ((data || []) as OrderRow[]).map((row) => ({
+      const mapped = ((data || []) as OrderRow[]).map((row) => {
         const firstItem = Array.isArray(row.items) && row.items.length > 0 ? row.items[0] : null
         const totalQuantity = Array.isArray(row.items)
           ? row.items.reduce((sum, item) => sum + Number(item?.quantity || 0), 0)
           : 0
 
         return {
-        id: row.id,
-        customerName: row.customer_name,
-        phone: row.phone,
-        email: row.email || undefined,
-        city: row.city,
-        address: row.address,
-        notes: row.notes || undefined,
-        status: row.status,
-        createdAt: row.created_at,
-        product: {
-          title: firstItem?.name || row.primary_product_title || 'Produit non renseigne',
-          priceMAD: Number(firstItem?.price || row.primary_product_price_mad || 0),
-          image: firstItem?.image || undefined,
-          size: firstItem?.size || undefined,
-          quantity: totalQuantity > 0 ? totalQuantity : 1,
-        },
-        totalAmountMAD: Number(row.total_amount_mad || row.primary_product_price_mad || 0),
-      }})
+          id: row.id,
+          customerName: row.customer_name,
+          phone: row.phone,
+          email: row.email || undefined,
+          city: row.city,
+          address: row.address,
+          notes: row.notes || undefined,
+          status: row.status,
+          createdAt: row.created_at,
+          product: {
+            title: firstItem?.name || row.primary_product_title || 'Produit non renseigne',
+            priceMAD: Number(firstItem?.price || row.primary_product_price_mad || 0),
+            image: firstItem?.image || undefined,
+            size: firstItem?.size || undefined,
+            quantity: totalQuantity > 0 ? totalQuantity : 1,
+          },
+          totalAmountMAD: Number(row.total_amount_mad || row.primary_product_price_mad || 0),
+        }
+      })
 
       setOrders(mapped)
     } catch (error) {
