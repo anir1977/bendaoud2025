@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 
 const SETTING_KEY = 'maintenance_mode'
 const CACHE_MS = 30_000
-const FORCE_MAINTENANCE = true
+const FORCE_MAINTENANCE = false
 
 let cachedMaintenance = {
   value: false,
