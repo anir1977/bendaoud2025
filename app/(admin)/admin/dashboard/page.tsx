@@ -201,10 +201,26 @@ export default function AdminDashboard() {
   const toggleMaintenance = async () => {
     setMaintenanceLoading(true)
     try {
+      let emergencySession: { email?: string; expiresAt?: number } | null = null
+      if (typeof window !== 'undefined') {
+        const emergencyRaw = localStorage.getItem('admin_emergency_session')
+        if (emergencyRaw) {
+          emergencySession = JSON.parse(emergencyRaw)
+        }
+      }
+
       const response = await fetch('/api/admin/maintenance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ enabled: !maintenanceEnabled }),
+        body: JSON.stringify({
+          enabled: !maintenanceEnabled,
+          emergencySession: emergencySession
+            ? {
+                email: emergencySession.email,
+                expiresAt: emergencySession.expiresAt,
+              }
+            : null,
+        }),
       })
 
       if (!response.ok) {

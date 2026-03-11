@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
 const SETTING_KEY = 'maintenance_mode'
+const EMERGENCY_ADMIN_EMAIL = 'ayouz202@gmail.com'
+const EMERGENCY_SESSION_MAX_MS = 12 * 60 * 60 * 1000
 
 export async function GET() {
   try {
@@ -26,25 +28,40 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const supabase = createClient()
-
-    const { data: userData, error: userError } = await supabase.auth.getUser()
-    if (userError || !userData.user?.email) {
-      return NextResponse.json({ error: 'Non autorise' }, { status: 401 })
-    }
-
-    const { data: adminData, error: adminError } = await supabase
-      .from('admin_users')
-      .select('id')
-      .eq('email', userData.user.email)
-      .eq('is_active', true)
-      .maybeSingle()
-
-    if (adminError || !adminData) {
-      return NextResponse.json({ error: 'Acces admin requis' }, { status: 403 })
-    }
-
     const body = await request.json().catch(() => ({}))
     const enabled = Boolean(body?.enabled)
+
+    const { data: userData, error: userError } = await supabase.auth.getUser()
+    let actorEmail = userData.user?.email || null
+
+    if (!userError && userData.user?.email) {
+      const { data: adminData, error: adminError } = await supabase
+        .from('admin_users')
+        .select('id')
+        .eq('email', userData.user.email)
+        .eq('is_active', true)
+        .maybeSingle()
+
+      if (adminError || !adminData) {
+        return NextResponse.json({ error: 'Acces admin requis' }, { status: 403 })
+      }
+    } else {
+      // Fallback temporaire pour la session admin de secours (sans session Supabase)
+      const emergencyEmail = String(body?.emergencySession?.email || '').trim().toLowerCase()
+      const emergencyExpiresAt = Number(body?.emergencySession?.expiresAt || 0)
+      const now = Date.now()
+      const isEmergencyValid =
+        emergencyEmail === EMERGENCY_ADMIN_EMAIL &&
+        Number.isFinite(emergencyExpiresAt) &&
+        emergencyExpiresAt > now &&
+        emergencyExpiresAt <= now + EMERGENCY_SESSION_MAX_MS
+
+      if (!isEmergencyValid) {
+        return NextResponse.json({ error: 'Session admin invalide. Reconnectez-vous.' }, { status: 401 })
+      }
+
+      actorEmail = EMERGENCY_ADMIN_EMAIL
+    }
 
     const { error: upsertError } = await supabase
       .from('site_settings')
@@ -53,7 +70,7 @@ export async function POST(request: Request) {
           key: SETTING_KEY,
           value: enabled,
           updated_at: new Date().toISOString(),
-          updated_by: userData.user.email,
+          updated_by: actorEmail,
         },
         { onConflict: 'key' }
       )
