@@ -22,6 +22,7 @@ export default function CheckoutPage() {
   const [currentStep, setCurrentStep] = useState(2);
   const [isLoading, setIsLoading] = useState(false);
   const [orderConfirmed, setOrderConfirmed] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   
   const [cartItems, setCartItems] = useState<CartItem[]>([
     {
@@ -56,12 +57,37 @@ export default function CheckoutPage() {
 
   const handleOrderSubmit = async (formData: any) => {
     setIsLoading(true);
-    
-    setTimeout(() => {
+    setSubmitError(null);
+
+    try {
+      const response = await fetch('/api/checkout/order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          items: cartItems.map((item) => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+          })),
+        }),
+      });
+
+      if (!response.ok) {
+        const json = await response.json().catch(() => ({}));
+        throw new Error(json?.error || 'Erreur lors de l\'envoi de la commande');
+      }
+
       setIsLoading(false);
       setOrderConfirmed(true);
       setCurrentStep(4);
-    }, 2000);
+    } catch (error: any) {
+      setIsLoading(false);
+      setSubmitError(error?.message || 'Une erreur est survenue.');
+    }
   };
 
   if (orderConfirmed) {
@@ -199,8 +225,13 @@ export default function CheckoutPage() {
               <CheckoutForm 
                 onSubmit={handleOrderSubmit}
                 isLoading={isLoading}
-                submitUrl="https://readdy.ai/api/form/submit/checkout-order"
+                submitUrl="/api/checkout/order"
               />
+              {submitError && (
+                <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
+                  <p className="text-sm text-red-700">{submitError}</p>
+                </div>
+              )}
             </div>
             
             <div className="lg:col-span-1">

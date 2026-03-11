@@ -51,21 +51,12 @@ export default function CheckoutForm({ onSubmit, isLoading, submitUrl }: Checkou
     if (!validateForm()) return;
 
     try {
-      const response = await fetch('https://readdy.ai/api/form/d3erbehevi82osegr1r0', {
+      const response = await fetch(submitUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/json',
         },
-        body: new URLSearchParams({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          phone: formData.phone,
-          address: formData.address,
-          city: formData.city,
-          paymentMethod: formData.paymentMethod,
-          notes: formData.notes
-        })
+        body: JSON.stringify(formData)
       });
 
       if (response.ok) {

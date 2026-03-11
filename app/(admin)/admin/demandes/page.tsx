@@ -3,26 +3,45 @@
 
 import { useState, useEffect } from 'react'
 import AdminLayout from '@/components/AdminLayout'
+import { createClient } from '@/lib/supabase/client'
 
 interface OrderRequest {
-  id: string
+  id: number
   customerName: string
   phone: string
+  email?: string
   city: string
   address: string
   notes?: string
-  status: 'PENDING' | 'PROCESSED'
+  status: 'PENDING' | 'PROCESSED' | 'CANCELED'
   createdAt: string
   product: {
     title: string
     priceMAD: number
   }
+  totalAmountMAD: number
+}
+
+interface OrderRow {
+  id: number
+  customer_name: string
+  phone: string
+  email?: string | null
+  city: string
+  address: string
+  notes?: string | null
+  status: 'PENDING' | 'PROCESSED' | 'CANCELED'
+  created_at: string
+  primary_product_title?: string | null
+  primary_product_price_mad?: number | null
+  total_amount_mad?: number | null
 }
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState<OrderRequest[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<'all' | 'pending' | 'processed'>('all')
+  const supabase = createClient()
 
   useEffect(() => {
     fetchOrders()
@@ -30,51 +49,35 @@ export default function AdminOrders() {
 
   const fetchOrders = async () => {
     try {
-      // Mock data
-      const mockOrders: OrderRequest[] = [
-        {
-          id: '1',
-          customerName: 'Fatima El Amrani',
-          phone: '0661234567',
-          city: 'Casablanca',
-          address: 'Rue Mohamed V, Quartier Maarif',
-          notes: 'Livraison préférée le matin',
-          status: 'PENDING',
-          createdAt: new Date().toISOString(),
-          product: {
-            title: 'Bague Solitaire Diamant Or 18K',
-            priceMAD: 15000
-          }
+      const { data, error } = await supabase
+        .from('order_requests')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        console.error('Erreur lors du chargement des demandes:', error)
+        setOrders([])
+        return
+      }
+
+      const mapped = ((data || []) as OrderRow[]).map((row) => ({
+        id: row.id,
+        customerName: row.customer_name,
+        phone: row.phone,
+        email: row.email || undefined,
+        city: row.city,
+        address: row.address,
+        notes: row.notes || undefined,
+        status: row.status,
+        createdAt: row.created_at,
+        product: {
+          title: row.primary_product_title || 'Produit non renseigne',
+          priceMAD: Number(row.primary_product_price_mad || 0),
         },
-        {
-          id: '2',
-          customerName: 'Ahmed Benali',
-          phone: '0662345678',
-          city: 'Rabat',
-          address: 'Avenue Hassan II, Agdal',
-          status: 'PENDING',
-          createdAt: new Date(Date.now() - 86400000).toISOString(),
-          product: {
-            title: 'Montre Tissot PRC 200',
-            priceMAD: 2800
-          }
-        },
-        {
-          id: '3',
-          customerName: 'Khadija Alami',
-          phone: '0663456789',
-          city: 'Marrakech',
-          address: 'Quartier Gueliz, Rue de la Liberté',
-          notes: 'Appeler avant livraison',
-          status: 'PROCESSED',
-          createdAt: new Date(Date.now() - 172800000).toISOString(),
-          product: {
-            title: 'Collier Perles Or Jaune 18K',
-            priceMAD: 8500
-          }
-        }
-      ]
-      setOrders(mockOrders)
+        totalAmountMAD: Number(row.total_amount_mad || row.primary_product_price_mad || 0),
+      }))
+
+      setOrders(mapped)
     } catch (error) {
       console.error('Erreur lors du chargement des demandes:', error)
     } finally {
@@ -82,8 +85,17 @@ export default function AdminOrders() {
     }
   }
 
-  const handleStatusChange = async (orderId: string, newStatus: 'PENDING' | 'PROCESSED') => {
+  const handleStatusChange = async (orderId: number, newStatus: 'PENDING' | 'PROCESSED') => {
     try {
+      const { error } = await supabase
+        .from('order_requests')
+        .update({ status: newStatus })
+        .eq('id', orderId)
+
+      if (error) {
+        throw error
+      }
+
       setOrders(orders.map(order => 
         order.id === orderId ? { ...order, status: newStatus } : order
       ))
@@ -172,6 +184,9 @@ export default function AdminOrders() {
                           <p className="text-sm text-gray-600">
                             {order.product.title} • {order.product.priceMAD.toLocaleString()} MAD
                           </p>
+                          <p className="text-sm text-gray-500">
+                            Total: {order.totalAmountMAD.toLocaleString()} MAD
+                          </p>
                         </div>
                         <div className="flex items-center space-x-2">
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -194,6 +209,12 @@ export default function AdminOrders() {
                             <i className="ri-phone-line mr-2"></i>
                             {order.phone}
                           </p>
+                          {order.email && (
+                            <p className="text-sm text-gray-600 mt-1">
+                              <i className="ri-mail-line mr-2"></i>
+                              {order.email}
+                            </p>
+                          )}
                           <p className="text-sm text-gray-600 mt-1">
                             <i className="ri-map-pin-line mr-2"></i>
                             {order.city}
